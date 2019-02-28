@@ -1,5 +1,5 @@
 #
-# Postgis tolerance adjusted from default 1E-8 to 1E-1
+# Postgis tolerance adjusted from default 1E-8 to 1E-6
 #
 # Orginal container build mdillon/postgis
 
@@ -9,6 +9,8 @@ MAINTAINER tvijlbrief@gmail.com
 
 ENV POSTGIS_VERSION 2.5.1
 ENV POSTGIS_SHA256 d380e9ec0aeee87c5d976b9111ea11199ba875f2cd496c49b4141db29cee9557
+
+COPY ./lwstroke.c /
 
 RUN set -ex \
     \
@@ -44,6 +46,7 @@ RUN set -ex \
         geos-dev \
         proj4-dev \
         protobuf-c-dev \
+    && cp /lwstroke.c /usr/src/postgis/liblwgeom/ \
     && cd /usr/src/postgis \
     && sed 's/EPSILON_SQLMM 1e-8/EPSILON_SQLMM 1e-1/' < liblwgeom/liblwgeom_internal.h > tmp.h \
     && mv tmp.h liblwgeom/liblwgeom_internal.h \
