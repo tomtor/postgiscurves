@@ -1,27 +1,27 @@
-diff --git a/lwstroke.c b/../postgis-2.5.1/liblwgeom/lwstroke.c
-index 880b654..2958213 100644
---- a/lwstroke.c
-+++ b/../postgis-2.5.1/liblwgeom/lwstroke.c
-@@ -796,13 +796,6 @@ static int pt_continues_arc(const POINT4D *a1, const POINT4D *a2, const POINT4D
+diff --git a/../postgis-2.5.1/liblwgeom/lwstroke.c b/lwstroke.c
+index 2958213..880b654 100644
+--- a/../postgis-2.5.1/liblwgeom/lwstroke.c
++++ b/lwstroke.c
+@@ -796,6 +796,13 @@ static int pt_continues_arc(const POINT4D *a1, const POINT4D *a2, const POINT4D
  	POINT2D *t2 = (POINT2D*)a2;
  	POINT2D *t3 = (POINT2D*)a3;
  	POINT2D *tb = (POINT2D*)b;
--
--	double distance1 = distance2d_pt_pt(t1, t2);
--	double distance2 = distance2d_pt_pt(t2, t3);
--
--	if ( fabs(distance1 - distance2) > 2 * EPSILON_SQLMM )
--		return LW_FALSE;
--
++
++	double distance1 = distance2d_pt_pt(t1, t2);
++	double distance2 = distance2d_pt_pt(t2, t3);
++
++	if ( fabs(distance1 - distance2) > 2 * EPSILON_SQLMM )
++		return LW_FALSE;
++
  	double radius = lw_arc_center(t1, t2, t3, &center);
  	double b_distance, diff;
  
-@@ -825,7 +818,7 @@ static int pt_continues_arc(const POINT4D *a1, const POINT4D *a2, const POINT4D
+@@ -818,7 +825,7 @@ static int pt_continues_arc(const POINT4D *a1, const POINT4D *a2, const POINT4D
  		/* Is the angle similar to the previous one ? */
  		diff = fabs(angle1 - angle2);
  		LWDEBUGF(4, " angle1: %g, angle2: %g, diff:%g", angle1, angle2, diff);
--		if ( diff > angle1 / 4 || diff > angle2 / 4)
-+		if ( diff > EPSILON_SQLMM )
+-		if ( diff > EPSILON_SQLMM )
++		if ( diff > angle1 / 4 || diff > angle2 / 4)
  		{
  			return LW_FALSE;
  		}
