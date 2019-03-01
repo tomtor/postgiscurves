@@ -819,13 +819,9 @@ static int pt_continues_arc(const POINT4D *a1, const POINT4D *a2, const POINT4D 
 	{
 		int a2_side = lw_segment_side(t1, t3, t2);
 		int b_side  = lw_segment_side(t1, t3, tb);
-		double angle1 = lw_arc_angle(t1, t2, t3);
-		double angle2 = lw_arc_angle(t2, t3, tb);
-
-		/* Is the angle similar to the previous one ? */
-		diff = fabs(angle1 - angle2);
-		LWDEBUGF(4, " angle1: %g, angle2: %g, diff:%g", angle1, angle2, diff);
-		if ( diff > angle1 / 4 || diff > angle2 / 4)
+		double distance3 = distance2d_pt_pt(t3, tb);
+		diff = fabs(distance3 - distance2);
+		if ( diff > 2 * EPSILON_SQLMM )
 		{
 			return LW_FALSE;
 		}
