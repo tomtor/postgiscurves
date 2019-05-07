@@ -1,5 +1,5 @@
 TAG=tomtor/postgis:postgis251_1e-1_fix
-TAG_ARM=tomtor/postgis:postgis251_1e-1_fix_arm
+TAG_ARM=tomtor/postgis:postgis251_1e-1_fix_raster_arm
 
 build:
 	docker build -t $(TAG) .

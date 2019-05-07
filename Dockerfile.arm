@@ -35,6 +35,15 @@ RUN set -ex \
         -d /usr/src/geos geos.zip \
     && rm geos.zip \
     \
+    && wget -O gdal.tar.gz "http://download.osgeo.org/gdal/2.4.1/gdal-2.4.1.tar.gz" \
+    && mkdir -p /usr/src/gdal \
+    && tar \
+        --extract \
+        --file gdal.tar.gz \
+        --directory /usr/src/gdal \
+        --strip-components 1 \
+    && rm gdal.tar.gz \
+    \
     && apk add --no-cache --virtual .build-deps \
         autoconf \
         automake \
@@ -44,6 +53,7 @@ RUN set -ex \
         libxml2-dev \
         make \
         perl \
+	linux-headers \
     \
     && cd /usr/src/geos/geos-master \
     && ./autogen.sh \
@@ -51,6 +61,12 @@ RUN set -ex \
     && make -j4 \
     && make install \
     && rm -rf /usr/src/geos \
+    \
+    && cd /usr/src/gdal \
+    && ./configure \
+    && make -j3 \
+    && make install \
+    && rm -rf /usr/src/gdal \
     \
     && apk add --no-cache --virtual .build-deps-edge \
         --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \    
@@ -64,9 +80,8 @@ RUN set -ex \
     && ./autogen.sh \
 # configure options taken from:
 # https://anonscm.debian.org/cgit/pkg-grass/postgis.git/tree/debian/rules?h=jessie
-    && ./configure --without-raster \
-#       --with-gui \
-    && make \
+    && ./configure \
+    && make -j4 \
     && make install \
     && apk add --no-cache --virtual .postgis-rundeps \
         json-c \
