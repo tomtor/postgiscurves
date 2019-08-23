@@ -3,14 +3,12 @@
 #
 # Orginal container build mdillon/postgis
 
-FROM postgres:11.2-alpine
+#FROM postgres:11.2-alpine
+FROM postgres:12-beta3-alpine
 # MAINTAINER Régis Belson <me@regisbelson.fr>
 MAINTAINER tvijlbrief@gmail.com
 
-ENV POSTGIS_VERSION 2.5.1
-ENV POSTGIS_SHA256 d380e9ec0aeee87c5d976b9111ea11199ba875f2cd496c49b4141db29cee9557
-
-COPY ./lwstroke.c /
+# COPY ./lwstroke.c /
 
 RUN set -ex \
     \
@@ -18,16 +16,12 @@ RUN set -ex \
         ca-certificates \
         openssl \
         tar \
+	subversion \
+	zip \
     \
-    && wget -O postgis.tar.gz "https://github.com/postgis/postgis/archive/$POSTGIS_VERSION.tar.gz" \
-    && echo "$POSTGIS_SHA256 *postgis.tar.gz" | sha256sum -c - \
-    && mkdir -p /usr/src/postgis \
-    && tar \
-        --extract \
-        --file postgis.tar.gz \
-        --directory /usr/src/postgis \
-        --strip-components 1 \
-    && rm postgis.tar.gz \
+    && cd /usr/src && wget https://github.com/CGAL/cgal/archive/releases/CGAL-4.13.1.tar.gz && tar xzf CGAL*gz && rm CGAL*gz \
+    && wget https://github.com/Oslandia/SFCGAL/archive/master.zip && unzip master.zip && rm master.zip \
+    && svn checkout https://svn.osgeo.org/postgis/trunk/ /usr/src/postgis \
     \
     && apk add --no-cache --virtual .build-deps \
         autoconf \
@@ -38,18 +32,25 @@ RUN set -ex \
         libxml2-dev \
         make \
         perl \
+	bison \
+	cmake \
     \
     && apk add --no-cache --virtual .build-deps-edge \
         --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \    
         --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
         gdal-dev \
         geos-dev \
-        proj4-dev \
+	proj-dev \
         protobuf-c-dev \
-    && cp /lwstroke.c /usr/src/postgis/liblwgeom/ \
+	gmp-dev \
+	mpfr-dev \
+	boost-dev \
+    && cd /usr/src/cgal* && cmake . && make install \
+    && cd /usr/src/SFCGAL-master* && cmake . && make install \ 
+    # && cp /lwstroke.c /usr/src/postgis/liblwgeom/ \
     && cd /usr/src/postgis \
-    && sed 's/EPSILON_SQLMM 1e-8/EPSILON_SQLMM 1e-1/' < liblwgeom/liblwgeom_internal.h > tmp.h \
-    && mv tmp.h liblwgeom/liblwgeom_internal.h \
+    # && sed 's/EPSILON_SQLMM 1e-8/EPSILON_SQLMM 1e-1/' < liblwgeom/liblwgeom_internal.h > tmp.h \
+    # && mv tmp.h liblwgeom/liblwgeom_internal.h \
     && ./autogen.sh \
 # configure options taken from:
 # https://anonscm.debian.org/cgit/pkg-grass/postgis.git/tree/debian/rules?h=jessie
@@ -57,17 +58,23 @@ RUN set -ex \
 #       --with-gui \
     && make \
     && make install \
-    && apk add --no-cache --virtual .postgis-rundeps \
+    && apk add --no-cache \
         json-c \
-    && apk add --no-cache --virtual .postgis-rundeps-edge \
+    && apk add --no-cache \
         --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \    
         --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \        
         geos \
         gdal \
-        proj4 \
+        proj \
         protobuf-c \
-    && cd / \
+	gmp \
+	mpfr3 \
+        boost \
+    && cd /usr/local/lib \
+    && ln -s /usr/local/lib64/* . \
     && rm -rf /usr/src/postgis \
+    && rm -rf /usr/src/cgal* \
+    && rm -rf /usr/src/SFCGAL* \
     && apk del .fetch-deps .build-deps .build-deps-edge
 
 COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh
