@@ -1,4 +1,5 @@
-TAG=tomtor/postgis:postgis251_1e-1_fix12_tolerance
+#TAG=tomtor/postgis:postgis251_11.3_fix
+TAG=tomtor/postgis:postgis300trunk_SFCGAL413_12.beta
 
 build:
 	docker build -t $(TAG) .
