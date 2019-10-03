@@ -1,4 +1,4 @@
-TAG=tomtor/postgis:postgis300trunk_SFCGAL413_12.beta
+TAG=tomtor/postgis:postgis300trunk_SFCGAL413_12.0
 TAG_ARM=tomtor/postgis:postgis251_1e-1_fix_raster_arm
 
 build:

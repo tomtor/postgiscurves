@@ -4,7 +4,9 @@
 # Orginal container build mdillon/postgis
 
 #FROM postgres:11.2-alpine
-FROM postgres:12-beta3-alpine
+#FROM postgres:12-beta3-alpine
+#FROM postgres:12-rc1-alpine
+FROM postgres:12-alpine
 # MAINTAINER Régis Belson <me@regisbelson.fr>
 MAINTAINER tvijlbrief@gmail.com
 
@@ -41,7 +43,7 @@ RUN set -ex \
         gdal-dev \
         geos-dev \
 	proj-dev \
-        protobuf-c-dev \
+        # protobuf-c-dev \
 	gmp-dev \
 	mpfr-dev \
 	boost-dev \
@@ -66,9 +68,9 @@ RUN set -ex \
         geos \
         gdal \
         proj \
-        protobuf-c \
+        # protobuf-c \
 	gmp \
-	mpfr3 \
+	mpfr4 \
         boost \
     && cd /usr/local/lib \
     && ln -s /usr/local/lib64/* . \
