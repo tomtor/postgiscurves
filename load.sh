@@ -10,6 +10,6 @@ do
 
   ogr2ogr -f "PostgreSQL" -overwrite -a_srs EPSG:28992 -nlt CONVERT_TO_LINEAR -lco SPATIAL_INDEX=GIST PG:"dbname=$DB host=$HOST port=$PORT" "$f"
 
-  echo "ALTER TABLE public.$TAB CLUSTER ON ${TAB}_wkb_geometry_geom_idx;" | psql -U $PGU -h $HOST -p $PORT $DB
+  echo "CLUSTER VERBOSE public.$TAB USING ${TAB}_wkb_geometry_geom_idx;" | psql -U $PGU -h $HOST -p $PORT $DB
 
 done
