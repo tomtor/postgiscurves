@@ -10,7 +10,6 @@ do
 
   ogr2ogr -progress -f "PostgreSQL" -overwrite -a_srs EPSG:28992 -nlt CONVERT_TO_LINEAR -lco SPATIAL_INDEX=GIST -lco DIM=2 PG:"dbname=$DB host=$HOST port=$PORT" "$f"
 
-  # echo "ALTER TABLE public.$TAB CLUSTER ON ${TAB}_wkb_geometry_geom_idx;" | psql -U $PGU -h $HOST -p $PORT $DB
   echo $TAB ends at $(date)
 
 done
