@@ -23,3 +23,5 @@ echo "select count(*) from bag_extract_deelbestand__antwoord_producten_lvc_produ
 echo "delete from bag_extract_deelbestand__antwoord_producten_lvc_product_pand where tijdvakgeldigheid_einddatumtijdvakgeldigheid IS NOT NULL or aanduidingrecordinactief = 'J' or pandstatus = 'Pand gesloopt';" | psql -U $PGU -h $HOST -p $PORT $DB
 
 echo "delete from bag_extract_deelbestand__antwoord_producten_lvc_product_pand where not st_isvalid(pandgeometrie);" | psql -U $PGU -h $HOST -p $PORT $DB
+
+psql -U $PGU -h $HOST -p $PORT $DB < diff-view.sql
