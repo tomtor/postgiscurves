@@ -20,6 +20,6 @@ done
 
 echo "select count(*) from bag_extract_deelbestand__antwoord_producten_lvc_product_pand;" | psql -U $PGU -h $HOST -p $PORT $DB
 
-echo "delete from bag_extract_deelbestand__antwoord_producten_lvc_product_pand where tijdvakgeldigheid_einddatumtijdvakgeldigheid IS NOT NULL or aanduidingrecordinactief::text = 'J';" | psql -U $PGU -h $HOST -p $PORT $DB
+echo "delete from bag_extract_deelbestand__antwoord_producten_lvc_product_pand where tijdvakgeldigheid_einddatumtijdvakgeldigheid IS NOT NULL or aanduidingrecordinactief::text = 'J' or pandstatus <> 'Pand in gebruik';" | psql -U $PGU -h $HOST -p $PORT $DB
 
 echo "delete from bag_extract_deelbestand__antwoord_producten_lvc_product_pand where not st_isvalid(pandgeometrie);" | psql -U $PGU -h $HOST -p $PORT $DB
