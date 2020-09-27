@@ -12,23 +12,10 @@ do
   TAB=$(echo "$f" | sed -e "s/9999PND//" -e "s/\\.xml.*//")
   echo $TAB starts at $(date)
 
-  ogr2ogr -progress -f "PostgreSQL"  -a_srs EPSG:28992 -nlt CONVERT_TO_LINEAR -lco SPATIAL_INDEX=GIST -lco DIM=2 PG:"dbname=$DB host=$HOST port=$PORT" GMLAS:"$f"
+  ogr2ogr -progress -f "PostgreSQL" -where "'tijdvakgeldigheid|einddatumTijdvakGeldigheid' IS NULL AND 'tijdvakgeldigheid|aanduidingRecordInactief' <> 'J'" -a_srs EPSG:28992 -nlt CONVERT_TO_LINEAR -lco SPATIAL_INDEX=GIST -lco DIM=2 PG:"dbname=$DB host=$HOST port=$PORT" GMLAS:"$f"
 
-  # echo "ALTER TABLE public.$TAB CLUSTER ON ${TAB}_wkb_geometry_geom_idx;" | psql -U $PGU -h $HOST -p $PORT $DB
   echo $TAB ends at $(date)
 
 done
 
-exit 0
-
-  echo "DROP TABLE $TAB;" | psql -U $PGU -h $HOST -p $PORT $DB
-
-  echo "CREATE INDEX ${TAB}_multi ON public.$TAB USING gist (wkb_geometry);" | \
-	psql -U $PGU -h $HOST -p $PORT $DB
-
-    echo "CREATE INDEX $f_multi
-    ON public.kunstwerkdeel USING gist
-    (wkbt_geometry)
-    TABLESPACE pg_default;
-    ALTER TABLE public.kunstwerkdeel CLUSTER ON kunstwerkdeel_multi;" | psql -U $PGU -h $HOST -p $PORT $DB
-    # (geometrie_multivlak, geometrie_lijn, geometrie_multipunt, geometrie_vlak)
+echo "delete from bag_extract_deelbestand__antwoord_producten_lvc_product_pand where not st_isvalid(pandgeometrie);" | psql -U $PGU -h $HOST -p $PORT $DB

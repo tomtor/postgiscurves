@@ -1,7 +1,7 @@
 curl http://geodata.nationaalgeoregister.nl/inspireadressen/extract/inspireadressen.zip --output inspire-adressen.zip
 
-unzip inspire-adressen.zip 9999PND08022020.zip
+unzip inspire-adressen.zip
 
-unzip 9999PND08022020.zip
+unzip *PND*.zip
 
 rm *.zip
