@@ -1,8 +1,8 @@
 -- View: public.diffbag
 
-DROP VIEW public.diffbag cascade;
+DROP VIEW public.diffbagarea cascade;
 
-CREATE OR REPLACE VIEW public.diffbag
+CREATE OR REPLACE VIEW public.diffbagarea
  AS
  SELECT a.ogc_fid,
     a.gml_id,
@@ -36,17 +36,18 @@ CREATE OR REPLACE VIEW public.diffbag
    FROM pand a
      -- JOIN bag_extract_deelbestand__antwoord_producten_lvc_product_pand b ON st_overlaps(st_snaptogrid(a.wkb_geometry,0.1), st_snaptogrid(b.pandgeometrie,0.1))
      JOIN bag_extract_deelbestand__antwoord_producten_lvc_product_pand b ON st_overlaps(a.wkb_geometry,b.pandgeometrie)
-  -- WHERE a.eindregistratie IS NULL AND b.tijdvakgeldigheid_einddatumtijdvakgeldigheid IS NULL AND b.aanduidingrecordinactief::text <> 'J'::text AND abs(st_perimeter(a.wkb_geometry) - st_perimeter(b.pandgeometrie)) > 1::double precision;
-  WHERE abs(st_perimeter(a.wkb_geometry) - st_perimeter(b.pandgeometrie)) > 1::double precision;
+  -- WHERE abs(st_perimeter(a.wkb_geometry) - st_perimeter(b.pandgeometrie)) > 1::double precision
+  WHERE abs(st_area(a.wkb_geometry) - st_area(b.pandgeometrie)) > 0.1::double precision
+    and a.identificatiebagpnd = b.identificatie::bigint;
 
 -- ALTER TABLE public.diffbag OWNER TO postgresadmin;
 
 -- GRANT ALL ON TABLE public.diffbag TO postgresadmin;
-GRANT ALL ON TABLE public.diffbag TO PUBLIC;
+GRANT ALL ON TABLE public.diffbagarea TO PUBLIC;
 
 
-create materialized view diffbagmat as select * from diffbag;
+create materialized view diffbagareamat as select * from diffbagarea;
 
-CREATE INDEX diffbagmat_wkb_geometry_geom_idx ON public.diffbagmat USING gist (wkb_geometry) TABLESPACE pg_default;
+CREATE INDEX diffbagareamat_wkb_geometry_geom_idx ON public.diffbagareamat USING gist (wkb_geometry) TABLESPACE pg_default;
 
-CREATE INDEX diff_ogc_id ON public.diffbagmat USING btree (ogc_fid ASC NULLS LAST) INCLUDE(ogc_fid) TABLESPACE pg_default;
+CREATE INDEX diffarea_ogc_id ON public.diffbagareamat USING btree (ogc_fid ASC NULLS LAST) INCLUDE(ogc_fid) TABLESPACE pg_default;
